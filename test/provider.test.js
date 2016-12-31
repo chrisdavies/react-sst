@@ -34,7 +34,7 @@ describe('Provider', function () {
     provider.componentDidMount();
 
     count.should.eql(0);
-    store.setState({hi: 'You!'});
+    store.onChange();
     count.should.eql(1);
   });
 

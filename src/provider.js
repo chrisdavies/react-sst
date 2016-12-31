@@ -17,11 +17,7 @@ var Provider = React.createClass({
 
   componentDidMount: function() {
     var me = this;
-    var store = this.props.store;
-    var setStoreState = store.setState;
-
-    store.setState = function(state) {
-      setStoreState(state);
+    this.props.store.onChange = function() {
       me.setState({});
     };
   },

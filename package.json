@@ -1,6 +1,6 @@
 {
   "name": "react-sst",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "React-bindings for sst",
   "main": "react-sst.js",
   "scripts": {
@@ -17,7 +17,6 @@
     "mocha": "^3.2.0",
     "proxyquire": "^1.7.10",
     "react": "^15.4.1",
-    "sst": "0.0.1",
     "uglifyjs": "^2.4.10"
   }
 }
