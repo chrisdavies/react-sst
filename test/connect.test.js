@@ -12,7 +12,8 @@ const mockTracker = {};
 const proxyquire = require('proxyquire');
 const connect = proxyquire('../src/connect', {
   'react': MockReact,
-  './tracker': function(store, props, mapStateToProps) {
+  './tracker': function(Proxy, store, props, mapStateToProps) {
+    mockTracker._Proxy = Proxy;
     mockTracker._store = store;
     mockTracker._props = props;
     mockTracker._mapStateToProps = mapStateToProps;
@@ -21,8 +22,9 @@ const connect = proxyquire('../src/connect', {
 });
 
 describe('connect', function () {
-  it('expects ProxiedStore to be contextually provided', function () {
+  it('expects ProxiedStore and state to be contextually provided', function () {
     const Component = connect({});
+    Component.contextTypes.store.should.eql(React.PropTypes.object);
     Component.contextTypes.ProxiedStore.should.eql(React.PropTypes.func);
   });
 
@@ -48,13 +50,17 @@ describe('connect', function () {
     const mapStateToProps = () => {};
     const component = connect(mapStateToProps, {})();
     component.context = {
-      ProxiedStore: function () {
-        this.name = 'MOCK STORE';
+      store: {
+        name: 'MOCK STORE'
+      },
+      ProxiedStore: {
+        name: 'MOCK PROXY'
       }
     };
     component.props = {yo: 'yo'};
     component.getInitialState();
 
+    mockTracker._Proxy.name.should.eql('MOCK PROXY');
     mockTracker._store.name.should.eql('MOCK STORE');
     mockTracker._props.should.eql({yo: 'yo'});
     mockTracker._mapStateToProps.should.eql(mapStateToProps);

@@ -1,35 +1,46 @@
-'use strict';
-
 module.exports = Tracker;
 
-function Tracker(store, props, mapStateToProps) {
+function Tracker(Proxy, store, props, mapStateToProps) {
   this.store = store;
   this.mapStateToProps = mapStateToProps || function() {
     return {};
   };
+  this.proxy = new Proxy();
+  this.$sst = this.proxy;
 
-  buildProps(this, props);
+  makeProps(this, props);
 }
 
 Tracker.prototype = {
   shouldUpdate: function (nextProps) {
-    var prevSst = this.prevSst;
+    var prevSst = this.$sst;
     var prevProps = this.prevProps;
 
-    buildProps(this, nextProps);
+    this.$sst = nextSst(this);
 
-    return (diff(prevProps, this.prevProps) || diff(prevSst.$sst, this.prevSst.$sst));
+    makeProps(this, nextProps);
+
+    return (diff(prevProps, this.prevProps) || diff(prevSst, this.$sst));
   }
 };
 
-function buildSst(me) {
-  return {$sst: me.store.getState(), $action: me.store.$action};
+function nextSst(me) {
+  var keys = (me.proxy && me.proxy.$keys) || me.$sst;
+  var accessedState = {};
+  var fullState = me.store.getState();
+
+  for (var key in keys) {
+    accessedState[key] = fullState[key];
+  }
+
+  me.proxy = undefined;
+
+  return accessedState;
 }
 
-function buildProps(me, props) {
+function makeProps(me, props) {
   me.prevProps = Object.assign({}, props, me.mapStateToProps(me.store.getState(), props));
-  me.prevSst = buildSst(me);
-  return me.props = Object.assign({}, me.prevSst, me.prevProps);
+  return me.props = Object.assign({}, {$sst: me.$sst, $action: me.store.actions}, me.prevProps);
 }
 
 // The keys will always be the same, since we build o2 from o1's keys

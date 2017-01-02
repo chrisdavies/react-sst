@@ -7,7 +7,7 @@ describe('proxied-store', function () {
   it('gets state initially', function() {
     const state = {a: 'a!', b: 'b!'};
     const Proxy = getConstructor(fakeStore(state));
-    const prox = new Proxy().getState();
+    const prox = new Proxy();
 
     prox.a.should.eql('a!');
     prox.b.should.eql('b!');
@@ -18,8 +18,9 @@ describe('proxied-store', function () {
     const Proxy = getConstructor(fakeStore(state));
     const prox = new Proxy();
 
-    prox.getState().b.should.eql('b!');
-    should.not.exist(prox.getState().a);
+    prox.b.should.eql('b!');
+    should.not.exist(prox.$keys.a);
+    should.exist(prox.$keys.b);
   });
 
   function fakeStore(state={hi: 'there'}) {

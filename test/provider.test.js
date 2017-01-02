@@ -22,7 +22,7 @@ describe('Provider', function () {
     provider.getInitialState();
     const ProxiedStore = provider.getChildContext().ProxiedStore;
     const prox = new ProxiedStore();
-    prox.getState().hi.should.eql('there');
+    prox.hi.should.eql('there');
     prox.$keys.hi.should.be.true;
   });
 

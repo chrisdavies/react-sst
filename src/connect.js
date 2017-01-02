@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react');
 var Tracker = require('./tracker');
 
@@ -11,10 +9,9 @@ module.exports = function connect(mapStateToProps, Element) {
 
   var component = React.createClass({
     getInitialState: function() {
-      var ProxiedStore = this.context.ProxiedStore;
-
       this.tracker = new Tracker(
-        new ProxiedStore(),
+        this.context.ProxiedStore,
+        this.context.store,
         this.props,
         mapStateToProps
       );
@@ -36,6 +33,7 @@ module.exports = function connect(mapStateToProps, Element) {
   });
 
   component.contextTypes = {
+    store: React.PropTypes.object,
     ProxiedStore: React.PropTypes.func,
   };
 

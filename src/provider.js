@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react');
 var makeProxiedStore = require('./proxied-store');
 
@@ -11,7 +9,8 @@ var Provider = React.createClass({
 
   getChildContext: function() {
     return {
-      ProxiedStore: this.ProxiedStore
+      store: this.props.store,
+      ProxiedStore: this.ProxiedStore,
     };
   },
 
@@ -28,6 +27,7 @@ var Provider = React.createClass({
 });
 
 Provider.childContextTypes = {
+  store: React.PropTypes.object,
   ProxiedStore: React.PropTypes.func,
 };
 

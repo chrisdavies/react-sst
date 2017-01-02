@@ -1,36 +1,14 @@
-'use strict';
-
 module.exports = getProxyConstructor;
 
 function getProxyConstructor(store) {
   function Proxy() {
-    this.$store = store;
     this.$keys = {};
+    this.$state = store.getState();
   }
-
-  Proxy.prototype = {
-    getState: getInitialState,
-  };
 
   addProxyGetters(Proxy.prototype, store.getState());
 
   return Proxy;
-}
-
-function getInitialState() {
-  this.getState = getAccessedState;
-  return this;
-}
-
-function getAccessedState() {
-  var accessedState = {};
-  var fullState = this.$store.getState();
-
-  for (var key in this.$keys) {
-    accessedState[key] = fullState[key];
-  }
-
-  return accessedState;
 }
 
 function addProxyGetters(prot, state) {
@@ -44,7 +22,7 @@ function addProxyGetter(prot, prop) {
     enumerable: true,
     get: function () {
       this.$keys[prop] = true;
-      return this.$store.getState()[prop];
+      return this.$state[prop];
     },
   });
 }
