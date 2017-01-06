@@ -1,5 +1,6 @@
 'use strict';
 
+const sst = require('sst');
 const React = {
   createClass(def) {
     return function(props) {
@@ -18,7 +19,7 @@ describe('Provider', function () {
   });
 
   it('creates a proxied store initially', function() {
-    const provider = Provider({store: fakeStore({hi: 'there'})});
+    const provider = Provider({store: makeStore({hi: 'there'})});
     provider.getInitialState();
     const ProxiedStore = provider.getChildContext().ProxiedStore;
     const prox = new ProxiedStore();
@@ -28,7 +29,7 @@ describe('Provider', function () {
 
   it('updates component state when global state changes', function() {
     let count = 0;
-    const store = fakeStore({hi: 'there'});
+    const store = makeStore({hi: 'there'});
     const provider = Provider({store});
     provider.setState = () => ++count;
     provider.componentDidMount();
@@ -44,24 +45,14 @@ describe('Provider', function () {
       ++count;
       children.should.eql('MY LIL BEBE');
     }
-    const store = fakeStore({hi: 'there'});
+    const store = makeStore({hi: 'there'});
     const provider = Provider({store, children: 'MY LIL BEBE'});
     count.should.eql(0);
     provider.render();
     count.should.eql(1);
   });
 
-  function fakeStore(state) {
-    const store = {
-      state,
-      getState() {
-        return this.state;
-      },
-      setState(state) {
-        store.state = state;
-      }
-    };
-
-    return store;
+  function makeStore(state) {
+    return sst(state, {});
   }
 });

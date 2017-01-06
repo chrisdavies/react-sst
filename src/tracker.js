@@ -6,26 +6,26 @@ function Tracker(Proxy, store, props, mapStateToProps) {
     return {};
   };
   this.proxy = new Proxy();
-  this.$sst = this.proxy;
+  this.$state = this.proxy;
 
   makeProps(this, props);
 }
 
 Tracker.prototype = {
   shouldUpdate: function (nextProps) {
-    var prevSst = this.$sst;
+    var prevSst = this.$state;
     var prevProps = this.prevProps;
 
-    this.$sst = nextSst(this);
+    this.$state = nextSst(this);
 
     makeProps(this, nextProps);
 
-    return (diff(prevProps, this.prevProps) || diff(prevSst, this.$sst));
+    return (diff(prevProps, this.prevProps) || diff(prevSst, this.$state));
   }
 };
 
 function nextSst(me) {
-  var keys = (me.proxy && me.proxy.$keys) || me.$sst;
+  var keys = (me.proxy && me.proxy.$keys) || me.$state;
   var accessedState = {};
   var fullState = me.store.getState();
 
@@ -40,7 +40,7 @@ function nextSst(me) {
 
 function makeProps(me, props) {
   me.prevProps = Object.assign({}, props, me.mapStateToProps(me.store.getState(), props));
-  return me.props = Object.assign({}, {$sst: me.$sst, $action: me.store.actions}, me.prevProps);
+  return me.props = Object.assign({}, {$state: me.$state, $transform: me.store.$transform, $selector: me.store.$selector}, me.prevProps);
 }
 
 // The keys will always be the same, since we build o2 from o1's keys

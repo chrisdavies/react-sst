@@ -1,5 +1,6 @@
 'use strict';
 
+const sst = require('sst');
 const getConstructor = require('../src/proxied-store');
 const should = require('chai').should();
 
@@ -24,10 +25,6 @@ describe('proxied-store', function () {
   });
 
   function fakeStore(state={hi: 'there'}) {
-    return {
-      getState() {
-        return state;
-      }
-    };
+    return sst(state);
   }
 });
